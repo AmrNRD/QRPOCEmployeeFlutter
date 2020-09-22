@@ -47,5 +47,12 @@
     "days": "ايام",
     "place_the_qr_code_inside_area": "ضع الرمز داخل المربع",
     "qr_scanning": "مسح رمز ال QR",
-    "notCompleted": "غير مكتمل"
+    "notCompleted": "غير مكتمل",
+    "field": "حقل",
+    "log_in_error_email": "من فضلك ادخل بريد الالكتروني صحيح",
+    "register_re_email_error": "من فضلك اعد ادخال البريدي الالكتروني بشكل صحيح",
+    "re_password_error_empty": "من فضلك اعد ادخال كلمة السر بشكل صحيح",
+    "re_password_mismatch":"من فضلك اعد ادخال كلمة السر بشكل صحيح",
+    "missing_data": "ادخل باقي المعلومات"
+
 }

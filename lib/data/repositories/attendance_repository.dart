@@ -30,7 +30,7 @@ class AttendanceDataRepository extends AttendanceRepository{
 
   @override
   Future<Attendance> sendQR(String qrCode) async{
-    final extractedData = await APICaller.postData("/attendances-month-records",body: {"qr_code":qrCode}, authorizedHeader: true);
+    final extractedData = await APICaller.postData("/register-attendance/qr",body: {"qr_code":qrCode}, authorizedHeader: true);
     Attendance attendance=Attendance.fromJson(extractedData);
     return attendance;
   }

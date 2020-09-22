@@ -115,7 +115,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin{
                     Wave(animationValue: _controller.value,status: status,size:120),
                     Wave(animationValue: _controller.value,status: status,size:160),
                     Wave(animationValue: _controller.value,status: status,size:200),
-                    FloatingActionButton(heroTag: "scanButton",onPressed: null,child: Icon(status=="checked_in"||status=="checked_out"?FontAwesomeIcons.check:FontAwesomeIcons.qrcode,color: AppColors.white),backgroundColor: AppTheme.attendanceColor(status))
+                    FloatingActionButton(heroTag: "scanButton",onPressed: null,child: Icon(AppTheme.attendanceIcon(status),color: AppColors.white),backgroundColor: AppTheme.attendanceColor(status))
                   ],
                 ),
               );

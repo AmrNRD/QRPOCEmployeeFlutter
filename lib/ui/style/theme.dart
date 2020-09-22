@@ -109,6 +109,25 @@ AppTheme(String fontFamily){
   }
 
 
+  static IconData attendanceIcon(String status){
+    switch(status){
+      case "pending":
+        return FontAwesomeIcons.qrcode;
+      case "checked_in":
+      case "checked_out":
+        return FontAwesomeIcons.check;
+      case "missed":
+      case "work_hours_not_completed":
+        return FontAwesomeIcons.exclamation;
+      case "not_accepted":
+      case "absented":
+        return FontAwesomeIcons.times;
+      default:
+        return FontAwesomeIcons.times;
+    }
+  }
+
+
   static IconData attendanceCircleIcon(String status){
     switch(status){
       case "checked_in":

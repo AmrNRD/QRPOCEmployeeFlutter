@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   prefixIcon: PrefixIcon(iconData: FontAwesomeIcons.unlock)
                 ),
                 SizedBox(height: AppDimens.marginEdgeCase32),
-                Center(child: CustomRaisedButton(label: AppLocalizations.of(context).translate("sign_in"), onPress: onSkip, isLoading: reqStatus == 1)),
+                Center(child: CustomRaisedButton(label: AppLocalizations.of(context).translate("sign_in"), onPress: onLogin, isLoading: reqStatus == 1)),
                 Center(child: FlatButton(onPressed: widget.goToForgotPassword, child: Text(AppLocalizations.of(context).translate("forget"), style: Theme.of(context).textTheme.subtitle1))),
               ],
             ),
@@ -131,6 +131,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void onLogin() {
+    //todo:remove this in deployment
+    onSkip();
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 

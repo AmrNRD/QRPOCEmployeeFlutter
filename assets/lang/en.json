@@ -50,6 +50,13 @@
     "days": "Days",
     "place_the_qr_code_inside_area": "Place the QR code inside area",
     "qr_scanning": "QR Scanning",
-    "notCompleted": "Not Completed"
+    "notCompleted": "Not Completed",
+    "field": "Field",
+    "log_in_error_email": "Please enter valid email",
+    "register_re_email_error": "Please re-enter the email correctly",
+    "password_error_empty": "Please fill the password",
+    "re_password_error_empty": "Please re-enter the password correctly",
+    "re_password_mismatch": "Please re-enter the password correctly",
+    "missing_data": "missing data"
 
 }
