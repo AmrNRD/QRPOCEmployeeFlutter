@@ -131,8 +131,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void onLogin() {
-    //todo:remove this in deployment
-    onSkip();
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 

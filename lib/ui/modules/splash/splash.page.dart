@@ -60,23 +60,7 @@ class _LandingSplashScreenState extends State<LandingSplashScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
       //if user registered
       if (prefs.containsKey('userData')) {
-        //if email is verified
-        if (prefs.containsKey('verified')) {
-          //if user completed the initial setup
-          if (prefs.containsKey('loggedIn')) {
-            //check for opening by notification
-                _route = Env.homePage;
-
-          } else {
-            //if user did not completed the initial setup
-//            _route = SignInDataPage.routeName;
-            _route = Env.homePage;
-
-          }
-        } else {
-          //if email is not verified
-//          _route = VerifyPage.routeName;
-        }
+        _route = Env.homePage;
       } else {
         //if user not registered
         _route = Env.authPage;

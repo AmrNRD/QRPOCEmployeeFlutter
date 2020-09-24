@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math show sin, pi,sqrt;
 
 import 'package:QRFlutter/bloc/attendance/attendance_bloc.dart';
+import 'package:QRFlutter/data/repositories/attendance_repository.dart';
 import 'package:QRFlutter/ui/style/app.colors.dart';
 import 'package:QRFlutter/ui/style/theme.dart';
 import 'package:QRFlutter/utils/app.localization.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_qr_bar_scanner/qr_bar_scanner_camera.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ScanPage extends StatefulWidget {
@@ -23,9 +25,12 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin{
   String _qrCode;
   String status="pending";
 
+  AttendanceBloc attendanceBloc;
+
   @override
   void initState() {
     super.initState();
+    attendanceBloc=AttendanceBloc(AttendanceDataRepository());
     _controller = AnimationController(
       lowerBound: 0.5,
       duration: Duration(seconds: 3),
@@ -33,96 +38,105 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin{
     )..repeat()..reverse();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
       margin: EdgeInsetsDirectional.only(top: 50,start: 10,end: 10),
-      child: BlocListener<AttendanceBloc,AttendanceState>(
-        listener: (context,state){
-          if(state is AttendanceSentSuccessfully){
-            setState(() {
-              status=state.attendance.status;
-            });
-            Duration _duration = new Duration(seconds: 3);
-            Timer(_duration, goBack);
-          }
-        },
-        child: Stack(
-          children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap:() =>  Navigator.pop(context),
-                        child: Container(
-                          height: 60,
-                          width: 60,
-                          color: Colors.transparent,
-                          alignment: Alignment.center,
-                          child:  SizedBox(height: 30, width: 30, child: Icon(FontAwesomeIcons.times)),
-                        ),
-                      ),
-                    ),
-                    Expanded(flex: 9,child: Text(AppLocalizations.of(context).translate("qr_scanning",defaultText: "QR Scanning"),style:Theme.of(context).textTheme.headline1,textAlign: TextAlign.center,)),
-                    Flexible(flex:1,child: Container(color: Colors.transparent))
-                  ],
-                ),
-                SizedBox(height: screenAwareSize(84, context)),
-                Text(AppLocalizations.of(context).translate("place_the_qr_code_inside_area",defaultText: "Place the QR code inside area"),style:Theme.of(context).textTheme.headline2,textAlign: TextAlign.center),
-                SizedBox(height: screenAwareSize(30, context)),
-                Center(
-                  child: Stack(
+        child: BlocProvider<AttendanceBloc>(
+          create:(context)=> attendanceBloc,
+          child: BlocListener<AttendanceBloc,AttendanceState>(
+          listener: (context,state){
+            if(state is AttendanceSentSuccessfully){
+              setState(() {
+                status=state.attendance.status;
+              });
+              Vibrate.feedback(FeedbackType.heavy);
+              Duration _duration = new Duration(seconds: 3);
+              Timer(_duration, goBack);
+            }else if(state is AttendancesError){
+              Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text(state.message, style: Theme.of(context).textTheme.headline2.copyWith(color: Colors.white),),
+                backgroundColor: AppColors.accentColor1,
+              ));
+              Duration _duration = new Duration(seconds: 1);
+              Timer(_duration, goBack);
+            }
+          },
+          child: Stack(
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
-                      Container(
-                        height: 246,
-                        width: 246,
-                        alignment: Alignment.center,
-                        child: QRBarScannerCamera(
-                          onError: (context, error) => Text(error.toString(),
-                              style: TextStyle(color: Colors.red)),
-                          qrCodeCallback: (code) => _qrCallback(code),
-
+                      Flexible(
+                        flex: 1,
+                        child: GestureDetector(
+                          onTap:() =>  Navigator.pop(context),
+                          child: Container(
+                            height: 60,
+                            width: 60,
+                            color: Colors.transparent,
+                            alignment: Alignment.center,
+                            child:  SizedBox(height: 30, width: 30, child: Icon(FontAwesomeIcons.times)),
+                          ),
                         ),
                       ),
-                      SvgPicture.asset("assets/images/qr-window.svg"),
+                      Expanded(flex: 9,child: Text(AppLocalizations.of(context).translate("qr_scanning",defaultText: "QR Scanning"),style:Theme.of(context).textTheme.headline1,textAlign: TextAlign.center,)),
+                      Flexible(flex:1,child: Container(color: Colors.transparent))
                     ],
                   ),
-                ),
+                  SizedBox(height: screenAwareSize(84, context)),
+                  Text(AppLocalizations.of(context).translate("place_the_qr_code_inside_area",defaultText: "Place the QR code inside area"),style:Theme.of(context).textTheme.headline2,textAlign: TextAlign.center),
+                  SizedBox(height: screenAwareSize(30, context)),
+                  Center(
+                    child: Stack(
+                      children: <Widget>[
+                        Container(
+                          height: 246,
+                          width: 246,
+                          alignment: Alignment.center,
+                          child: QRBarScannerCamera(
+                            onError: (context, error) => Text(error.toString(),
+                                style: TextStyle(color: Colors.red)),
+                            qrCodeCallback: (code) => _qrCallback(code),
 
-              ],
-            ),
-            AnimatedBuilder(
-                animation: CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn),
-                builder: (context, child) {
-              return Positioned(
-                bottom: 5,
-                right: 0,
-                left: 0,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                    Wave(animationValue: _controller.value,status: status,size: 80),
-                    Wave(animationValue: _controller.value,status: status,size: 80),
-                    Wave(animationValue: _controller.value,status: status,size:120),
-                    Wave(animationValue: _controller.value,status: status,size:160),
-                    Wave(animationValue: _controller.value,status: status,size:200),
-                    FloatingActionButton(heroTag: "scanButton",onPressed: null,child: Icon(AppTheme.attendanceIcon(status),color: AppColors.white),backgroundColor: AppTheme.attendanceColor(status))
-                  ],
-                ),
-              );
-    }),
-          ],
-        ),
+                          ),
+                        ),
+                        SvgPicture.asset("assets/images/qr-window.svg"),
+                      ],
+                    ),
+                  ),
+
+                ],
+              ),
+              AnimatedBuilder(
+                  animation: CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn),
+                  builder: (context, child) {
+                return Positioned(
+                  bottom: 5,
+                  right: 0,
+                  left: 0,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      Wave(animationValue: _controller.value,status: status,size: 80),
+                      Wave(animationValue: _controller.value,status: status,size: 80),
+                      Wave(animationValue: _controller.value,status: status,size:120),
+                      Wave(animationValue: _controller.value,status: status,size:160),
+                      Wave(animationValue: _controller.value,status: status,size:200),
+                      FloatingActionButton(heroTag: "scanButton",onPressed: null,child: Icon(AppTheme.attendanceIcon(status),color: AppColors.white),backgroundColor: AppTheme.attendanceColor(status))
+                    ],
+                  ),
+                );
+            }),
+            ],
+          ),
       ),
+        ),
     ),
     );
   }

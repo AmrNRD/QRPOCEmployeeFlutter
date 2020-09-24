@@ -6,6 +6,8 @@ import 'package:QRFlutter/data/sources/remote/base/api_caller.dart';
 import 'package:QRFlutter/data/sources/remote/base/app.exceptions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../main.dart';
+
 
 abstract class UserRepository {
 
@@ -50,7 +52,7 @@ class UserDataRepository implements UserRepository {
 
   @override
   Future<User> login(String email, String password,  String platform,String firebaseToken) async {
-    final responseData = await APICaller.postData("/auth/login", body: {"email":email, "password":password,"firebase_token":firebaseToken, "platform":platform});
+    final responseData = await APICaller.postData("/auth/login", body: {"email":email, "password":password,"firebase_token":firebaseToken??"firebaseToken", "platform":platform,"type":"user"});
     User user = User.fromJson(responseData['user']);
     DateTime _expiryDate = DateTime.parse(responseData['expires_at']);
     final prefs = await SharedPreferences.getInstance();
@@ -61,22 +63,11 @@ class UserDataRepository implements UserRepository {
     return user;
   }
 
-  @override
-  logout() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    String theme = preferences.getString("theme");
-    preferences.clear();
-    preferences.setBool('boarded', true);
-    preferences.setString('theme', theme);
-  }
 
 
   @override
   Future<String> resetPassword(String email, String token, String newPassword) async {
-    final responseData = await APICaller.postData("/password/reset", body: {
-      "email": email,
-      "token": token,
-    },authorizedHeader: true);
+    final responseData = await APICaller.postData("/password/reset", body: {"email": email, "token": token},authorizedHeader: true);
     return responseData;
   }
 
@@ -107,6 +98,17 @@ class UserDataRepository implements UserRepository {
     return user;
   }
 
+
+  @override
+  logout() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String theme = preferences.getString("theme");
+    String local=preferences.getString('languageCode');
+    Root.user=null;
+    preferences.clear();
+    preferences.setString('languageCode', local);
+    preferences.setString('theme', theme);
+  }
 
 
 }

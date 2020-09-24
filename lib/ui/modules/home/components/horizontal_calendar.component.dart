@@ -139,7 +139,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                 }
             }
 
-            if(date.isBefore(DateTime.now())&&!set){
+            if(date.isBefore(DateTime.now())&&!set&&date.weekday!=6&&date.weekday!=5){
               iconColor=AppColors.failedColor;
               iconData=FontAwesomeIcons.solidTimesCircle;
             }

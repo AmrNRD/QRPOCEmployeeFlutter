@@ -23,7 +23,7 @@ class Env{
 
 //todo:please Set API Base Route
   static String _localUrl = 'http://192.168.1.20/joovlly/qr-laravel/public/api';
-  static String _productionUrl = 'https://amr.qr.com/api';
+  static String _productionUrl = 'http://amr.amrnrd.com/api';
   static devMode mode = devMode.production;
 
   static String get baseUrl {

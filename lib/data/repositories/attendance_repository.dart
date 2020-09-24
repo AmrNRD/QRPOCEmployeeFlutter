@@ -18,19 +18,20 @@ class AttendanceDataRepository extends AttendanceRepository{
       loadedAttendance.add(Attendance.fromJson(attendanceData));
     }
 
-    Map result={};
+    Map<String, dynamic> result={};
     result['attendances']=loadedAttendance;
     result['numberOfCheckedOutDays']=extractedData['number_of_checked_out_days'];
-    result['numberOfMissedOutDays']=extractedData['number_of_missed_out_days'];
-    result['numberOfAbsenceOutDays']=extractedData['number_of_absence_out_days'];
-    result['numberOfNotCompletedDays']=extractedData['number_of_not_completed_days'];
+    result['numberOfMissedOutDays']=extractedData['number_of_missed_days'];
+    result['numberOfAbsenceOutDays']=extractedData['number_of_absented_days'];
+    result['numberOfNotCompletedDays']=extractedData['number_of_work_hours_not_completed_days'];
 
     return result;
   }
 
   @override
   Future<Attendance> sendQR(String qrCode) async{
-    final extractedData = await APICaller.postData("/register-attendance/qr",body: {"qr_code":qrCode}, authorizedHeader: true);
+    String filteredQrCode=qrCode.substring(0,qrCode.length-6);
+    final extractedData = await APICaller.postData("/register-attendance/qr",body: {"qr_code":filteredQrCode}, authorizedHeader: true);
     Attendance attendance=Attendance.fromJson(extractedData);
     return attendance;
   }

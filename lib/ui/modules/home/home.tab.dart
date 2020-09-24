@@ -29,6 +29,12 @@ class _HomeTabPageState extends State<HomeTabPage> {
   int numberOfAbsenceOutDays=0;
 
   @override
+  void initState() {
+    BlocProvider.of<AttendanceBloc>(context).add(GetAllAttendances());
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: SingleChildScrollView(
@@ -58,13 +64,24 @@ class _HomeTabPageState extends State<HomeTabPage> {
                        return Container(margin: EdgeInsets.all(30),alignment: Alignment.center,child: SemiCircleSpinIndicator(color: Theme.of(context).accentColor),);
                      } else if(state is AttendancesLoaded){
                        DateTime today;
-                       if(DateTime.now().month==state.attendances[0].date.month)
-                         today=DateTime.now();
-                         else
-                         today=state.attendances.last.date;
+                       DateTime startOfTheMonthDate;
+                       DateTime endOfTheMonthDate;
+                        if(state.attendances.length>0)
+                        {
+                          if(DateTime.now().month==state.attendances[0].date.month)
+                            today=DateTime.now();
+                          else
+                            today=state.attendances.last.date;
 
+                         startOfTheMonthDate=startOfTheMonth(state.attendances[0].date.month,state.attendances[0].date.year);
+                         endOfTheMonthDate=endOfTheMonth(state.attendances[0].date.month,state.attendances[0].date.year);
+                        }else{
+                          today=DateTime.now();
+                          startOfTheMonthDate=startOfTheMonth(today.month,today.year);
+                          endOfTheMonthDate=endOfTheMonth(today.month,today.year);
+                        }
                        return  HorizontalCalendar(
-                         firstDate: startOfTheMonth(state.attendances[0].date.month,state.attendances[0].date.year),lastDate: endOfTheMonth(state.attendances[0].date.month,state.attendances[0].date.year),
+                         firstDate: startOfTheMonthDate,lastDate: endOfTheMonthDate,
                          selectedDecoration: BoxDecoration(shape: BoxShape.circle,color: Theme.of(context).canvasColor),
                          labelOrder: 	[LabelType.date,LabelType.month],
                          monthTextStyle: Theme.of(context).textTheme.headline6.copyWith(fontSize: 9),
@@ -88,7 +105,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
                     children: <Widget>[
-                    ProgressCard(checked: 20,missed: 5,absence: 5),
+                    ProgressCard(checked: numberOfCheckedOutDays,missed: numberOfMissedOutDays,absence: numberOfAbsenceOutDays),
                     GridView(
                       physics: NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,crossAxisSpacing: 10, childAspectRatio: 0.9),
@@ -97,7 +114,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
                       children: <Widget>[
                         DelayedAnimation(child: GridViewCard(title: "checked",color: AppColors.successColor,icon: FontAwesomeIcons.solidCheckCircle,days: numberOfCheckedOutDays),delay: 200),
                         DelayedAnimation(child: GridViewCard(title: "missed",color: AppColors.simpleWarningColor,icon: FontAwesomeIcons.solidCheckCircle,days: numberOfMissedOutDays),delay:400),
-                        DelayedAnimation(child: GridViewCard(title: "notCompleted",color: AppColors.warningColor,icon: FontAwesomeIcons.exclamationCircle,days: numberOfAbsenceOutDays),delay: 600),
+                        DelayedAnimation(child: GridViewCard(title: "notCompleted",color: AppColors.warningColor,icon: FontAwesomeIcons.exclamationCircle,days: numberOfNotCompletedDays),delay: 600),
                         DelayedAnimation(child: GridViewCard(title: "absence",color: AppColors.failedColor,icon: FontAwesomeIcons.solidTimesCircle,days: numberOfAbsenceOutDays),delay: 600),
                       ],
                     ),

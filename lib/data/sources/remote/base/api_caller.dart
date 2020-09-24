@@ -2,7 +2,9 @@ import "dart:async";
 import "dart:convert";
 import 'dart:io';
 
+import 'package:QRFlutter/bloc/user/user_bloc.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,7 +18,7 @@ class APICaller {
     return {"Content-Type": "application/json", "Accept": "application/json"};
   }
 
- static Future<Map<String, String>> authorizedHeaders() async {
+  static Future<Map<String, String>> authorizedHeaders() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     return {
@@ -45,6 +47,9 @@ class APICaller {
       final res = await http.get(Env.baseUrl + urlExtension, headers: headers).timeout(const Duration(seconds: 10), onTimeout: () {
         throw RequestTimeOutException("Poor internet or no internet connectivity");
       });
+      debugPrint('GET '+Env.baseUrl + urlExtension);
+      debugPrint('Status Code: '+res.statusCode.toString());
+      debugPrint(res.body.toString());
       var dataRetrived = returnResponse(res);
       return dataRetrived;
     } on SocketException {
@@ -65,12 +70,15 @@ class APICaller {
     } else {
       headers = APICaller.headers;
     }
-
     if (body == null) {
       body = {};
     }
 
     final res = await http.post(Env.baseUrl + urlExtension, headers: headers, body: json.encode(body));
+    debugPrint('POST '+Env.baseUrl + urlExtension);
+    debugPrint('Body: '+body.toString());
+    debugPrint('Status Code: '+res.statusCode.toString());
+    debugPrint(res.body.toString());
     var dataRetrived = returnResponse(res);
     return dataRetrived;
   }
@@ -93,11 +101,13 @@ class APICaller {
       body = {};
     }
 
-    final res = await http
-        .put(Env.baseUrl + urlExtension, headers: headers, body: json.encode(body))
-        .timeout(const Duration(seconds: 10), onTimeout: () {
+    final res = await http.put(Env.baseUrl + urlExtension, headers: headers, body: json.encode(body)).timeout(const Duration(seconds: 10), onTimeout: () {
       throw RequestTimeOutException("Poor internet or no internet connectivity, Please try again.");
     });
+    debugPrint('PUT '+Env.baseUrl + urlExtension);
+    debugPrint('Body: '+body.toString());
+    debugPrint('Status Code: '+res.statusCode.toString());
+    debugPrint(res.body.toString());
     var dataRetrived = returnResponse(res);
     return dataRetrived;
   }
@@ -119,7 +129,9 @@ class APICaller {
 
     final res = await http.delete(Env.baseUrl + urlExtension, headers: headers).timeout(const Duration(seconds: 10), onTimeout: () {throw RequestTimeOutException("Poor internet or no internet connectivity, Please try again.");});
     var dataRetrived = returnResponse(res);
-
+    debugPrint('DELETE '+Env.baseUrl + urlExtension);
+    debugPrint('Status Code: '+res.statusCode.toString());
+    debugPrint(res.body.toString());
     return dataRetrived;
   }
 
@@ -135,13 +147,7 @@ class APICaller {
         break;
       case 401:
         Map responseBody = json.decode(response.body);
-//        if(App.context!=null) {
-//          BlocProvider.of<UserBloc>(App.context)..add(LogoutUser());
-//          BlocProvider.of<HomeBloc>(App.context)..add(ChangePage(0));
-//          HomeDataRepository.totalUnFinishedActivity=0;
-//          HomeDataRepository.totalActivity=0;
-//          HomeDataRepository.activitiesStatisticsPerElement=[];
-//        }
+//        BlocProvider.of<UserBloc>(Root.)..add(LogoutUser());
         throw UnauthorisedException(responseBody.containsKey("message") ? responseBody["message"] : "Unauthorized");
         break;
       case 403:
@@ -153,7 +159,7 @@ class APICaller {
       case 409:
       case 422:
         Map responseBody = json.decode(response.body);
-        throw HttpException(responseBody['message']);
+        throw BadRequestException(responseBody['message']);
         break;
       case 500:
         debugPrint("Server error: "+response.body);

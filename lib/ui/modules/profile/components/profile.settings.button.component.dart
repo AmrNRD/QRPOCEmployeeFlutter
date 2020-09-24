@@ -1,4 +1,5 @@
 import 'package:QRFlutter/bloc/settings/settings_bloc.dart';
+import 'package:QRFlutter/bloc/user/user_bloc.dart';
 import 'package:QRFlutter/ui/style/app.dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,7 +48,7 @@ class SettingsButtonComponent extends StatelessWidget {
         ),
         Divider(thickness: 1),
         InkWell(
-          onTap: (){},
+          onTap: (){BlocProvider.of<UserBloc>(context).add(LogoutUser());},
           child: Container(
             margin: EdgeInsets.symmetric(vertical: AppDimens.marginEdgeCase32,horizontal: AppDimens.marginEdgeCase24),
             child: Text(
