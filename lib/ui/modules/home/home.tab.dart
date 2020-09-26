@@ -105,7 +105,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
                     children: <Widget>[
-                    ProgressCard(checked: numberOfCheckedOutDays,missed: numberOfMissedOutDays,absence: numberOfAbsenceOutDays),
+                    ProgressCard(checked: numberOfCheckedOutDays,missed: numberOfMissedOutDays,absence: numberOfAbsenceOutDays,notCompeted: numberOfNotCompletedDays,),
                     GridView(
                       physics: NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,crossAxisSpacing: 10, childAspectRatio: 0.9),

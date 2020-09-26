@@ -53,6 +53,7 @@
     "register_re_email_error": "من فضلك اعد ادخال البريدي الالكتروني بشكل صحيح",
     "re_password_error_empty": "من فضلك اعد ادخال كلمة السر بشكل صحيح",
     "re_password_mismatch":"من فضلك اعد ادخال كلمة السر بشكل صحيح",
-    "missing_data": "ادخل باقي المعلومات"
+    "missing_data": "ادخل باقي المعلومات",
+    "days_hours_not_completed": "ساعات غير مكتمله"
 
 }

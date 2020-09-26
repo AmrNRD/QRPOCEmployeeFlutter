@@ -24,10 +24,9 @@ class Root extends StatefulWidget {
   // This widget is the root of your application.
   static String fontFamily;
   static Locale locale;
+  static BuildContext appContext;
   static ThemeMode themeMode=ThemeMode.system;
   static User user;
-
-
   @override
   _RootState createState() => _RootState();
 }
@@ -38,11 +37,10 @@ class _RootState extends State<Root> {
 
   @override
   void initState() {
-    super.initState();
     settingsBloc=SettingsBloc(SettingsDataRepository());
     settingsBloc.add(LoadSettings());
     Root.fontFamily = AppFonts.fontSF;
-
+    super.initState();
   }
 
   changeFont(Locale locale){

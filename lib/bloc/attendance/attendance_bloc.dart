@@ -18,14 +18,15 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
     try{
       if(event is GetAllAttendances){
           Map<String, dynamic> res=await attendanceRepository.fetchMonthAttendancesRecords();
+
           yield AttendancesLoaded(attendances:res['attendances'],numberOfCheckedOutDays: res['numberOfCheckedOutDays'],numberOfMissedOutDays: res['numberOfMissedOutDays'],numberOfAbsenceOutDays: res['numberOfAbsenceOutDays'],numberOfNotCompletedDays: res['numberOfNotCompletedDays']);
       }else if(event is SendQR){
-        Attendance attendance=await attendanceRepository.sendQR(event.qrCode);
-        yield AttendanceSentSuccessfully(attendance);
+        Map<String, dynamic> res=await attendanceRepository.sendQR(event.qrCode);
+        yield AttendanceSentSuccessfully(attendance: res['attendance'],message: res['message']);
       }
     }catch(error){
       debugPrint("Error happened in AttendanceBloc of type ${error.runtimeType} with output ' ${error.toString()} '");
-    yield AttendancesError(error.toString());
+       yield AttendancesError(error.toString());
     }
   }
 }

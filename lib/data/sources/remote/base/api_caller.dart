@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../env.dart';
+import '../../../../main.dart';
 import 'app.exceptions.dart';
 
 
@@ -147,7 +148,7 @@ class APICaller {
         break;
       case 401:
         Map responseBody = json.decode(response.body);
-//        BlocProvider.of<UserBloc>(Root.)..add(LogoutUser());
+        BlocProvider.of<UserBloc>(Root.appContext)..add(LogoutUser());
         throw UnauthorisedException(responseBody.containsKey("message") ? responseBody["message"] : "Unauthorized");
         break;
       case 403:

@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../env.dart';
+import '../../../main.dart';
 import '../../../utils/core.util.dart';
 import '../../style/app.colors.dart';
 
@@ -24,6 +25,7 @@ class _LandingSplashScreenState extends State<LandingSplashScreen> {
 
   @override
   void initState() {
+    BlocProvider.of<UserBloc>(context).add(GetUser());
     startTime();
     super.initState();
   }
@@ -31,17 +33,17 @@ class _LandingSplashScreenState extends State<LandingSplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<UserBloc, UserState>(
-      listener: (BuildContext context, UserState state) async {
-        if (state is UserLoaded) {
-
-        } else if (state is UserError) {
-
-        }
-      },
-      child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: Align(
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: BlocListener<UserBloc, UserState>(
+        listener: (BuildContext context, UserState state) async {
+          if (state is UserLoaded) {
+            setState(() {
+              Root.user=Root.user;
+            });
+          }
+        },
+        child: Align(
             alignment: Alignment.center,
             child: Shimmer.fromColors(
               baseColor: AppColors.primaryColor,

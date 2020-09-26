@@ -10,7 +10,8 @@ class AttendancesLoading extends AttendanceState {}
 
 class AttendanceSentSuccessfully extends AttendanceState {
   final Attendance attendance;
-  AttendanceSentSuccessfully(this.attendance);
+  final String message;
+  AttendanceSentSuccessfully({this.attendance,this.message});
 }
 
 class AttendancesLoaded extends AttendanceState {

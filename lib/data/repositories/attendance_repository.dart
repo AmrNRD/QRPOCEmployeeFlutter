@@ -4,7 +4,7 @@ import 'package:QRFlutter/data/sources/remote/base/api_caller.dart';
 
 abstract class AttendanceRepository{
   Future<Map<String,dynamic>> fetchMonthAttendancesRecords();
-  Future<Attendance> sendQR(String qrCode);
+  Future<Map<String, dynamic>> sendQR(String qrCode);
 }
 
 class AttendanceDataRepository extends AttendanceRepository{
@@ -29,10 +29,14 @@ class AttendanceDataRepository extends AttendanceRepository{
   }
 
   @override
-  Future<Attendance> sendQR(String qrCode) async{
-    String filteredQrCode=qrCode.substring(0,qrCode.length-6);
+  Future<Map<String, dynamic>> sendQR(String qrCode) async{
+    String filteredQrCode=qrCode.substring(0,qrCode.length-5);
     final extractedData = await APICaller.postData("/register-attendance/qr",body: {"qr_code":filteredQrCode}, authorizedHeader: true);
-    Attendance attendance=Attendance.fromJson(extractedData);
-    return attendance;
+    Attendance attendance=Attendance.fromJson(extractedData['attendance']);
+    Map<String, dynamic> result={};
+    result['attendance']=attendance;
+    result['message']=extractedData['message'];
+
+    return result;
   }
 }

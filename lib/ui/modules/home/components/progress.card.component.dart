@@ -11,9 +11,10 @@ import 'package:flutter/widgets.dart';
 class ProgressCard extends StatefulWidget {
   final int checked;
   final int missed;
+  final int notCompeted;
   final int absence;
 
-  const ProgressCard({Key key,@required this.checked,@required this.missed,@required this.absence}) : super(key: key);
+  const ProgressCard({Key key,@required this.checked,@required this.missed,@required this.absence,@required this.notCompeted}) : super(key: key);
   @override
   _ProgressCardState createState() => _ProgressCardState();
 }
@@ -61,9 +62,10 @@ class _ProgressCardState extends State<ProgressCard> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
               Text(AppLocalizations.of(context).translate("monthly_progress",defaultText: "Monthly progress"),style: Theme.of(context).textTheme.headline2),
-                SizedBox(height: AppDimens.marginDefault14),
+              SizedBox(height: AppDimens.marginDefault14),
               ProgressColorCard(color: AppColors.successColor,title: "days_checked",count: widget.checked),
-              ProgressColorCard(color: AppColors.warningColor,title: "days_check_missed",count: widget.missed),
+              ProgressColorCard(color: AppColors.simpleWarningColor,title: "days_check_missed",count: widget.missed),
+//              ProgressColorCard(color: AppColors.warningColor,title: "days_hours_not_completed",count: widget.notCompeted),
               ProgressColorCard(color: AppColors.failedColor,title: "days_absence",count: widget.absence),
               ],
             ),
@@ -139,15 +141,12 @@ class ProgressColorCard extends StatelessWidget {
     return Row(
       children: <Widget>[
         Container(
-          decoration:  BoxDecoration(
-          borderRadius: BorderRadius.circular(6),
-          color: color,
-          ),
+          decoration:  BoxDecoration(borderRadius: BorderRadius.circular(6), color: color),
           width: screenAwareWidth(15, context),
           height: screenAwareSize(10,context),
           margin: EdgeInsetsDirectional.only(end: 10),
         ),
-        Text(count.toString()+" "+AppLocalizations.of(context).translate(title,defaultText: title),style: Theme.of(context).textTheme.headline4,),
+        Text(count.toString()+" "+AppLocalizations.of(context).translate(title,defaultText: title),style: Theme.of(context).textTheme.headline4),
       ],
     );
   }

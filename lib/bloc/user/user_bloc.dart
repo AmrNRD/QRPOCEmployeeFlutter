@@ -20,8 +20,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     yield UserLoading();
     try {
       if (event is GetUser) {
+        print('GetUser');
          Root.user = await userRepository.fetchUserData();
         yield UserLoaded(Root.user);
+        print('End GetUser');
       } else if (event is LoginUser) {
         Root.user = await userRepository.login(event.email, event.password, event.platform, event.firebaseToken);
         yield UserLoaded(Root.user);

@@ -40,7 +40,7 @@
     "system_settings": "System Settings",
     "logout": "Logout",
     "dark_mode": "Dark mode",
-    "days_checked": "Days checked",
+    "days_checked": "Days checked out",
     "days_check_missed": "Days check missed",
     "days_absence": "Days absence",
     "monthly_progress": "Monthly progress",
@@ -57,6 +57,7 @@
     "password_error_empty": "Please fill the password",
     "re_password_error_empty": "Please re-enter the password correctly",
     "re_password_mismatch": "Please re-enter the password correctly",
-    "missing_data": "missing data"
+    "missing_data": "missing data",
+    "days_hours_not_completed": "Days work hours not completed"
 
 }

@@ -24,6 +24,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin{
   AnimationController _controller;
   String _qrCode;
   String status="pending";
+  int reqStatus=0;
 
   AttendanceBloc attendanceBloc;
 
@@ -31,11 +32,7 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin{
   void initState() {
     super.initState();
     attendanceBloc=AttendanceBloc(AttendanceDataRepository());
-    _controller = AnimationController(
-      lowerBound: 0.5,
-      duration: Duration(seconds: 3),
-      vsync: this,
-    )..repeat()..reverse();
+    _controller = AnimationController(lowerBound: 0.5, duration: Duration(seconds: 3), vsync: this)..repeat()..reverse();
   }
 
   @override
@@ -48,6 +45,10 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin{
           child: BlocListener<AttendanceBloc,AttendanceState>(
           listener: (context,state){
             if(state is AttendanceSentSuccessfully){
+              Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text(state.message, style: Theme.of(context).textTheme.headline2.copyWith(color: Colors.white)),
+                backgroundColor: AppColors.successColor,
+              ));
               setState(() {
                 status=state.attendance.status;
               });
@@ -56,8 +57,8 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin{
               Timer(_duration, goBack);
             }else if(state is AttendancesError){
               Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text(state.message, style: Theme.of(context).textTheme.headline2.copyWith(color: Colors.white),),
-                backgroundColor: AppColors.accentColor1,
+                content: Text(state.message, style: Theme.of(context).textTheme.headline2.copyWith(color: Colors.white)),
+                backgroundColor: AppColors.failedColor,
               ));
               Duration _duration = new Duration(seconds: 1);
               Timer(_duration, goBack);
@@ -143,7 +144,12 @@ class _ScanPageState extends State<ScanPage> with TickerProviderStateMixin{
 
 
   _qrCallback(String code) {
-    BlocProvider.of<AttendanceBloc>(context).add(SendQR(code));
+    if(reqStatus==0) {
+      attendanceBloc.add(SendQR(code));
+    setState(() {
+      reqStatus=1;
+    });
+    }
   }
 
   goBack(){
